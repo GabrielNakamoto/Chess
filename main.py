@@ -4,12 +4,18 @@ from player import Player
 from pawn import Pawn
 
 # ***** TO DO *****
-# -> Checkmate check
-# -> Pawn transform <- Current
-# -> castling
+# -> Checkmate check:
+
+# add player function and check every turn
+# if the king can move anywhere thats not in enemy paths
+# (iterate enemy paths)
+# then check if any of players pieces paths intersect with the check
+
+# -> Promotion choice (make a popup?)
+# -> castling (boolean in king that is true before first move)
 # -> en passent
 # -> numbers around edge + border?
-# -> moves appear on left
+# -> moves appear on side
 # -> replay (hard)
 # *****************
 
@@ -57,8 +63,7 @@ while True:
       select = P1.select_piece(BOARD) if turn == "White" else P2.select_piece(BOARD)
     if event.type == MOUSEBUTTONUP and select != False:
       if turn == "White" and select.snap(BOARD, P2, P1):
-        pass
-          #turn = "Black"
+          turn = "Black"
       elif select.snap(BOARD, P1, P2):
           turn = "White"
       select = False

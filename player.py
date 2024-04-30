@@ -42,15 +42,21 @@ class Player:
         # add promotion type paramater and filled bool
         self.pieces.remove(pawn)
         filled = False
-        if board[7][3] == self.color:
-            filled = True
         if type == "Queen":
+            check = board[7][3] if self.color == "W" else board[0][3]
+            filled = self.check_fill(check)
             new_piece = Queen(self.color, pawn.SIDE_L, board)
         elif type == "Rook":
+            check = board[7][0] if self.color == "W" else board[0][0]
+            filled = self.check_fill(check)
             new_piece = Rook(self.color, pawn.SIDE_L, 1, board)
         elif type == "Bishop":
+            check = board[7][2] if self.color == "W" else board[0][2]
+            filled = self.check_fill(check)
             new_piece = Bishop(self.color, pawn.SIDE_L, 1, board)
         elif type == "Horse":
+            check = board[7][1] if self.color == "W" else board[0][1]
+            filled = self.check_fill(check)
             new_piece = Horse(self.color, pawn.SIDE_L, 1, board)
         self.pieces.append(new_piece)
         new_piece = self.pieces[-1]
@@ -62,4 +68,12 @@ class Player:
         new_piece.past_y = pawn.y
         new_piece.rect = pygame.Rect(new_piece.x * new_piece.SIDE_L, new_piece.y * new_piece.SIDE_L, new_piece.SIDE_L, new_piece.SIDE_L)
 
+    def check_fill(self, check):
+        if check == self.color:
+            return True
+        else:
+            return False
+
+    def check_mate(self, opponent):
+        pass
 

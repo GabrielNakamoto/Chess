@@ -36,12 +36,3 @@ class Pawn(Piece):
         if x < 7:
             if board[y + dy][ x + 1] != "X" and board[y + dy][ x + 1] != self.color:
                 self.PATH.append([x + 1, y + dy])
-    '''
-    def snap(self, board, opponents):
-        super().snap(board, opponents)
-
-        if self.color == "W" and self.y == 7:
-            print("Switch")
-        elif self.color == "B" and self.y == 0:
-            print("Switch")
-    '''

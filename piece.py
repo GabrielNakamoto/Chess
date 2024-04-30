@@ -43,7 +43,21 @@ class Piece:
                     break
         if self.type == "Pawn":
             if self.color == "W" and self.y == 0 or self.color == "B" and self.y == 7:
-                player.promote(self, board, "Rook")
+                pygame.event.wait()
+                keys = pygame.key.get_pressed()
+                choice = " "
+                while choice == " ":
+                    pygame.event.wait()
+                    keys = pygame.key.get_pressed()
+                    if keys[K_q]:
+                        choice = "Queen"
+                    elif keys[K_h]:
+                        choice = "Horse"
+                    elif keys[K_r]:
+                        choice = "Rook"
+                    elif keys[K_b]:
+                        choice = "Bishop"
+                player.promote(self, board, choice)
         self.past_x = self.x
         self.past_y = self.y
         self.rect = pygame.Rect(self.x * self.SIDE_L, self.y * self.SIDE_L, self.SIDE_L, self.SIDE_L)
