@@ -26,13 +26,15 @@ class Piece:
         self.rect = pygame.Rect(self.x * self.SIDE_L, self.y * self.SIDE_L, self.SIDE_L, self.SIDE_L)
         self.path(board, screen)
 
-    def snap(self, board, opponent, player):
+    def snap(self, board, opponent, player, screen):
         self.x = round(self.x)
         self.y = round(self.y)
         output = True
         if not [self.x, self.y] in self.PATH or board[self.y][self.x] == self.color:
             self.x = self.past_x
             self.y = self.past_y
+            output = False
+        elif player.in_check(board, screen, self, opponent):
             output = False
         elif self.x == self.past_x and self.y == self.past_y:
             output = False

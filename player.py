@@ -74,6 +74,22 @@ class Player:
         else:
             return False
 
+    def in_check(self, board, screen, p, opponent):
+      past_color = board[p.y][p.x]
+      board[p.y][p.x] = self.color
+      for piece in opponent.pieces:
+        piece.path(board, screen)
+        if [self.k.x, self.k.y] in piece.PATH:
+          if p.x == piece.x and p.y == piece.y:
+            return False
+          print(self.color + " in check")
+          board[p.y][p.x] = past_color # previous color
+          board[p.past_y][p.past_x] = self.color
+          p.x = p.past_x
+          p.y = p.past_y
+          return True
+
+
     def check_mate(self, opponent):
         pass
 

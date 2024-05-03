@@ -17,6 +17,7 @@ from pawn import Pawn
 # -> numbers around edge + border?
 # -> moves appear on side
 # -> replay (hard)
+# -> timer system
 # *****************
 
 CANVAS_L = 750
@@ -41,7 +42,6 @@ for row in range(8):
     BOARD.append(BOARD_ROW)
 
 pygame.init()
-
 screen = pygame.display.set_mode((CANVAS_L, CANVAS_L))
 
 P1 = Player("W", SIDE_L, BOARD)
@@ -62,9 +62,9 @@ while True:
     if event.type == MOUSEBUTTONDOWN:
       select = P1.select_piece(BOARD) if turn == "White" else P2.select_piece(BOARD)
     if event.type == MOUSEBUTTONUP and select != False:
-      if turn == "White" and select.snap(BOARD, P2, P1):
+      if turn == "White" and select.snap(BOARD, P2, P1, screen):
           turn = "Black"
-      elif select.snap(BOARD, P1, P2):
+      elif select.snap(BOARD, P1, P2, screen):
           turn = "White"
       select = False
 
