@@ -17,8 +17,9 @@ class Pawn(Piece):
         x = self.past_x
         y = self.past_y
 
-        dy = 1 if self.color == "B" else -1
-
+        #dy = 1 if self.color == "B" else -1
+        dy = -1
+        '''
         if self.color == "B" and y == 1 or self.color == "W" and y == 6:
            cur = board[y + (dy * 2)][x]
            if cur == "X":
@@ -28,7 +29,20 @@ class Pawn(Piece):
             cur = board[y + dy][x]
             if cur == "X":
                 self.PATH.append([x, y + dy])
-
+        '''
+        '''
+        for pawn in opponent.pawns:
+            if pawn.y == pawn.y + dy and pawn.x == self.x + 1 or pawn.x == self.x - 1:
+                print("En pessant??")
+        '''
+        if y == 6:
+           cur = board[y + (dy * 2)][x]
+           if cur == "X":
+             self.PATH.append([x, y + (dy * 2)])
+        if 7 > y > 0:
+            cur = board[y + dy][x]
+            if cur == "X":
+                self.PATH.append([x, y + dy])
         if x > 0:
             if board[y + dy][ x - 1] != "X" and board[y + dy][ x - 1] != self.color and x > 0:
                 self.PATH.append([x - 1, y + dy])

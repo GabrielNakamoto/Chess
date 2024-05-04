@@ -8,6 +8,7 @@ class King(Piece):
         b_img = "/Users/gabrielnakamoto/Desktop/projects/ChessPy/images/BLACK_KING.png"
         x = 4
         y = 0 if color == "B" else 7
+        self.castle = True
         Piece.__init__(self, color, w_img, b_img, SIDE_L, board, x, y, "King")
 
     def path(self, board, screen):
@@ -34,3 +35,5 @@ class King(Piece):
 
         if x < 7:
             self.check_path(board, screen, x + 1, y)
+
+

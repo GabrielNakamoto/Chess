@@ -30,12 +30,21 @@ class Piece:
         self.x = round(self.x)
         self.y = round(self.y)
         output = True
+
+        if self.type == "King" and self.castle:
+            for piece in player.pieces:
+                if piece.type == "Rook" and self.x == piece.x and self.y == piece.y and piece.castle:
+                    if player.castle(piece, board):
+                        return output
+
         if not [self.x, self.y] in self.PATH or board[self.y][self.x] == self.color:
             self.x = self.past_x
             self.y = self.past_y
             output = False
         elif player.in_check(board, screen, self, opponent):
             output = False
+            #if player.check_mate(opponent, board, screen):
+            #    print("Check mate")
         elif self.x == self.past_x and self.y == self.past_y:
             output = False
         elif board[self.y][self.x] != "X":
@@ -64,6 +73,10 @@ class Piece:
         self.past_y = self.y
         self.rect = pygame.Rect(self.x * self.SIDE_L, self.y * self.SIDE_L, self.SIDE_L, self.SIDE_L)
         board[self.y][self.x] = self.color
+        if output and self.type == "Rook" and self.castle:
+            self.castle = False
+        elif output and self.type == "King" and self.castle:
+            self.castle = False
         return output
 
     def check_path(self, board, screen, x_target, y_target):
@@ -73,3 +86,12 @@ class Piece:
         self.PATH.append([x_target, y_target])
         if cur != "X":
             return False
+
+    def update(self, x, y, board):
+        board[self.y][self.x] = "X"
+        self.x = x
+        self.y = y
+        board[self.y][self.x] = self.color
+        self.past_x = x
+        self.past_y = y
+        pygame.Rect(x * self.SIDE_L, y * self.SIDE_L, self.SIDE_L, self.SIDE_L)

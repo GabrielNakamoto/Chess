@@ -82,7 +82,6 @@ class Player:
         if [self.k.x, self.k.y] in piece.PATH:
           if p.x == piece.x and p.y == piece.y:
             return False
-          print(self.color + " in check")
           board[p.y][p.x] = past_color # previous color
           board[p.past_y][p.past_x] = self.color
           p.x = p.past_x
@@ -90,6 +89,65 @@ class Player:
           return True
 
 
-    def check_mate(self, opponent):
-        pass
+    def check_mate(self, opponent, board, screen):
+        '''
+        If only 1 piece is checking see if we can kill it
+        or block it
+        No matter how many pieces see if king can move away
+        '''
+        check_pieces = []
+        for piece in opponent.pieces:
+            if [self.k.x, self.k.y] in piece.PATH:
+                check_pieces.append(piece)
+
+
+        if len(check_pieces) == 1:
+            for piece in self.pieces:
+                if [check_pieces[0].x, check_pieces[0].y] in piece.PATH and not self.in_check(board, screen, piece, opponent):
+                    return False
+                '''
+                check if we can block
+                else:
+                    for pos in piece.PATH:
+                '''
+
+        check_path = []
+        for piece in check_pieces:
+            for pos in piece.PATH:
+                check_path.append(pos)
+
+        for pos in check_path:
+            for k_pos in self.k.PATH:
+                if not k_pos in check_path:
+                    return False
+
+        return True
+
+    def flip(self):
+        for piece in self.pieces:
+            #piece.update(7 - piece.x, 7 - piece.y)
+            piece.x = 7 - piece.x
+            piece.y = 7 - piece.y
+            piece.past_x = 7 - piece.past_x
+            piece.past_y = 7 - piece.past_y
+            piece.rect = pygame.Rect(piece.x * piece.SIDE_L, piece.y * piece.SIDE_L, piece.SIDE_L, piece.SIDE_L)
+
+    def castle(self, rook, board):
+        if self.r1 == rook:
+            for i in range(3):
+                if board[self.r1.y][self.r1.x + i + 1] != "X":
+                    return False
+            rook.update(3,7, board)
+            self.k.update(2,7, board)
+        else:
+            for i in range(2):
+                if board[self.r2.y][self.r2.x - i - 1] != "X":
+                    return False
+            rook.update(5,7, board)
+            self.k.update(6,7, board)
+
+        # update board
+        self.k.castle = False
+        rook.castle = False
+        return True
 

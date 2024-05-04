@@ -8,6 +8,7 @@ class Rook(Piece):
         b_img = "/Users/gabrielnakamoto/Desktop/projects/ChessPy/images/BLACK_ROOK.png"
         x = 0 if num == 1 else 7
         y = 0 if color == "B" else 7
+        self.castle = True
         Piece.__init__(self, color, w_img, b_img, SIDE_L, board, x, y, "Rook")
 
 

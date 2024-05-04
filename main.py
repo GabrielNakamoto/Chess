@@ -11,7 +11,10 @@ from pawn import Pawn
 # (iterate enemy paths)
 # then check if any of players pieces paths intersect with the check
 
-# -> Promotion choice (make a popup?)
+# check for check and mate for both players!!
+
+# -> Stalemate check
+# -> Promotion popup?
 # -> castling (boolean in king that is true before first move)
 # -> en passent
 # -> numbers around edge + border?
@@ -48,6 +51,7 @@ P1 = Player("W", SIDE_L, BOARD)
 P2 = Player("B", SIDE_L, BOARD)
 
 select = False
+flip = True
 
 turn = "White"
 
@@ -64,14 +68,36 @@ while True:
     if event.type == MOUSEBUTTONUP and select != False:
       if turn == "White" and select.snap(BOARD, P2, P1, screen):
           turn = "Black"
+          if flip:
+            P1.flip()
+            P2.flip()
+            for row in range(4):
+              for col in range(8):
+                past = BOARD[row][col]
+                BOARD[row][col] = BOARD[7 - row][7 - col]
+                BOARD[7 - row][7 - col] = past
       elif select.snap(BOARD, P1, P2, screen):
           turn = "White"
+          if flip:
+            P1.flip()
+            P2.flip()
+            for row in range(4):
+              for col in range(8):
+                past = BOARD[row][col]
+                BOARD[row][col] = BOARD[7 - row][7 - col]
+                BOARD[7 - row][7 - col] = past
       select = False
 
   screen.fill(LIGHT)
 
   for row in range(8):
-    color = LIGHT if row % 2 == 0 else DARK
+    if flip:
+      if turn == "White":
+        color = LIGHT if row % 2 == 0 else DARK
+      else:
+        color = LIGHT if row % 2 != 0 else DARK
+    else:
+      color = LIGHT if row % 2 == 0 else DARK
     for col in range(8):
         rect = GRID[row][col]
         pygame.draw.rect(screen, color, rect)
@@ -88,3 +114,4 @@ while True:
 
 
   pygame.display.update()
+
