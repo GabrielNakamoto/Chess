@@ -8,7 +8,7 @@ from king import King
 from queen import Queen
 
 class Player:
-    def __init__(self, color, SIDE_L, board):
+    def __init__(self, color, SIDE_L, board, flip):
         self.color = color
         self.pieces = []
         self.r1 = Rook(color, SIDE_L, 1, board)
@@ -21,8 +21,8 @@ class Player:
         self.q = Queen(color, SIDE_L, board)
         self.pawns = []
         for i in range(8):
-            self.pawns.append(Pawn(color, SIDE_L, i, board))
-            self.pieces.append(Pawn(color, SIDE_L, i, board))
+            self.pawns.append(Pawn(color, SIDE_L, i, board, flip))
+            self.pieces.append(Pawn(color, SIDE_L, i, board, flip))
         self.pieces.extend([self.r1, self.r2, self.h1, self.h2, self.b1, self.b2, self.k, self.q])
 
     def draw(self, screen):
@@ -132,19 +132,29 @@ class Player:
             piece.past_y = 7 - piece.past_y
             piece.rect = pygame.Rect(piece.x * piece.SIDE_L, piece.y * piece.SIDE_L, piece.SIDE_L, piece.SIDE_L)
 
+
     def castle(self, rook, board):
+        dx = 1 if self.color == "W" else -1
         if self.r1 == rook:
             for i in range(3):
-                if board[self.r1.y][self.r1.x + i + 1] != "X":
+                if board[self.r1.y][self.r1.x + (dx * i) + dx] != "X":
                     return False
-            rook.update(3,7, board)
-            self.k.update(2,7, board)
+            if self.color == "W":
+                rook.update(3,7, board)
+                self.k.update(2,7, board)
+            else:
+                rook.update(4,7, board)
+                self.k.update(5,7, board)
         else:
             for i in range(2):
-                if board[self.r2.y][self.r2.x - i - 1] != "X":
+                if board[self.r2.y][self.r2.x - (dx * i) - dx] != "X":
                     return False
-            rook.update(5,7, board)
-            self.k.update(6,7, board)
+            if self.color == "W":
+                rook.update(5,7, board)
+                self.k.update(6,7, board)
+            else:
+                rook.update(2,7, board)
+                self.k.update(1,7, board)
 
         # update board
         self.k.castle = False

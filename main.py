@@ -13,6 +13,8 @@ from pawn import Pawn
 
 # check for check and mate for both players!!
 
+# -> Update pawns when flipping?
+
 # -> Stalemate check
 # -> Promotion popup?
 # -> castling (boolean in king that is true before first move)
@@ -47,11 +49,12 @@ for row in range(8):
 pygame.init()
 screen = pygame.display.set_mode((CANVAS_L, CANVAS_L))
 
-P1 = Player("W", SIDE_L, BOARD)
-P2 = Player("B", SIDE_L, BOARD)
+flip = True
+
+P1 = Player("W", SIDE_L, BOARD, flip)
+P2 = Player("B", SIDE_L, BOARD, flip)
 
 select = False
-flip = True
 
 turn = "White"
 
