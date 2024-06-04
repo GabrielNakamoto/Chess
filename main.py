@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, math
 from pygame.locals import *
 from player import Player
 from pawn import Pawn
@@ -13,11 +13,24 @@ from pawn import Pawn
 
 # check for check and mate for both players!!
 
-# -> Update pawns when flipping?
-
 # -> Stalemate check
+# -> add sounds
+
+# -> Make castling work flipped and not?
+# -> promote sound
+# -> check sound takes priority
+
+# -> select and click to move
+
+# -> timers
+
+# -> for border add an offset
+
+# -> highlight selected piece
+# -> highlight enemy last move
+# -> dots for possible moves
 # -> Promotion popup?
-# -> castling (boolean in king that is true before first move)
+# -> settings menu?
 # -> en passent
 # -> numbers around edge + border?
 # -> moves appear on side
@@ -26,6 +39,7 @@ from pawn import Pawn
 # *****************
 
 CANVAS_L = 750
+#WIDTH = CANVAS_L * 4/3
 SIDE_L = CANVAS_L / 8
 
 BLACK = (0, 0, 0)
@@ -47,12 +61,13 @@ for row in range(8):
     BOARD.append(BOARD_ROW)
 
 pygame.init()
+pygame.font.init() # you have to call this at the start,
+                   # if you want to use this module.
+my_font = pygame.font.SysFont('Comic Sans MS', 45)
 screen = pygame.display.set_mode((CANVAS_L, CANVAS_L))
 
-flip = True
-
-P1 = Player("W", SIDE_L, BOARD, flip)
-P2 = Player("B", SIDE_L, BOARD, flip)
+P1 = Player("W", SIDE_L, BOARD, 5)
+P2 = Player("B", SIDE_L, BOARD, 5)
 
 select = False
 
@@ -71,36 +86,21 @@ while True:
     if event.type == MOUSEBUTTONUP and select != False:
       if turn == "White" and select.snap(BOARD, P2, P1, screen):
           turn = "Black"
-          if flip:
-            P1.flip()
-            P2.flip()
-            for row in range(4):
-              for col in range(8):
-                past = BOARD[row][col]
-                BOARD[row][col] = BOARD[7 - row][7 - col]
-                BOARD[7 - row][7 - col] = past
       elif select.snap(BOARD, P1, P2, screen):
           turn = "White"
-          if flip:
-            P1.flip()
-            P2.flip()
-            for row in range(4):
-              for col in range(8):
-                past = BOARD[row][col]
-                BOARD[row][col] = BOARD[7 - row][7 - col]
-                BOARD[7 - row][7 - col] = past
       select = False
 
   screen.fill(LIGHT)
-
+  '''
+  if turn == "White" and pygame.time.get_ticks() - P1.past_time >= 1000:
+    P1.tick()
+    P1.past_time = pygame.time.get_ticks()
+  elif turn == "Black" and pygame.time.get_ticks() - P2.past_time >= 1000:
+    P2.tick()
+    P2.past_time = pygame.time.get_ticks()
+  '''
   for row in range(8):
-    if flip:
-      if turn == "White":
-        color = LIGHT if row % 2 == 0 else DARK
-      else:
-        color = LIGHT if row % 2 != 0 else DARK
-    else:
-      color = LIGHT if row % 2 == 0 else DARK
+    color = LIGHT if row % 2 == 0 else DARK
     for col in range(8):
         rect = GRID[row][col]
         pygame.draw.rect(screen, color, rect)
@@ -112,6 +112,18 @@ while True:
   P1.draw(screen)
   P2.draw(screen)
 
+
+
+  #pygame.draw.rect(screen, (85,85,85), (CANVAS_L, 0, CANVAS_L * 1/3, CANVAS_L))
+  # clocks
+  '''
+  pygame.draw.rect(screen, WHITE, (CANVAS_L, 0, CANVAS_L * 1/6, CANVAS_L * 1/12))
+  text_surface = my_font.render(P1.get_time(), False, BLACK)
+  screen.blit(text_surface, (CANVAS_L + 15, 0))
+  pygame.draw.rect(screen, BLACK, (CANVAS_L * 7/6, 0, CANVAS_L * 1/6, CANVAS_L * 1/12))
+  text_surface = my_font.render(P2.get_time(), False, WHITE)
+  screen.blit(text_surface, (CANVAS_L * 7/6 + 15, 0))
+  '''
   if select != False:
     select.draw(screen)
 

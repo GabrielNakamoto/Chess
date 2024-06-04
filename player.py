@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, math
 from pygame.locals import *
 from rook import Rook
 from horse import Horse
@@ -8,8 +8,10 @@ from king import King
 from queen import Queen
 
 class Player:
-    def __init__(self, color, SIDE_L, board, flip):
+    def __init__(self, color, SIDE_L, board, time):
         self.color = color
+        self.clock = time * 60
+        self.past_time = 0
         self.pieces = []
         self.r1 = Rook(color, SIDE_L, 1, board)
         self.r2 = Rook(color, SIDE_L, 2, board)
@@ -21,8 +23,8 @@ class Player:
         self.q = Queen(color, SIDE_L, board)
         self.pawns = []
         for i in range(8):
-            self.pawns.append(Pawn(color, SIDE_L, i, board, flip))
-            self.pieces.append(Pawn(color, SIDE_L, i, board, flip))
+            self.pawns.append(Pawn(color, SIDE_L, i, board))
+            self.pieces.append(Pawn(color, SIDE_L, i, board))
         self.pieces.extend([self.r1, self.r2, self.h1, self.h2, self.b1, self.b2, self.k, self.q])
 
     def draw(self, screen):
@@ -62,11 +64,14 @@ class Player:
         new_piece = self.pieces[-1]
         if not filled:
             board[new_piece.y][new_piece.x] = "X"
+        new_piece.update(pawn.x, pawn.y, board)
+        '''
         new_piece.x = pawn.x
         new_piece.y = pawn.y
         new_piece.past_x = pawn.x
         new_piece.past_y = pawn.y
         new_piece.rect = pygame.Rect(new_piece.x * new_piece.SIDE_L, new_piece.y * new_piece.SIDE_L, new_piece.SIDE_L, new_piece.SIDE_L)
+        '''
 
     def check_fill(self, check):
         if check == self.color:
@@ -90,48 +95,13 @@ class Player:
 
 
     def check_mate(self, opponent, board, screen):
-        '''
-        If only 1 piece is checking see if we can kill it
-        or block it
-        No matter how many pieces see if king can move away
-        '''
-        check_pieces = []
-        for piece in opponent.pieces:
-            if [self.k.x, self.k.y] in piece.PATH:
-                check_pieces.append(piece)
-
-
-        if len(check_pieces) == 1:
-            for piece in self.pieces:
-                if [check_pieces[0].x, check_pieces[0].y] in piece.PATH and not self.in_check(board, screen, piece, opponent):
-                    return False
-                '''
-                check if we can block
-                else:
-                    for pos in piece.PATH:
-                '''
-
-        check_path = []
-        for piece in check_pieces:
-            for pos in piece.PATH:
-                check_path.append(pos)
-
-        for pos in check_path:
-            for k_pos in self.k.PATH:
-                if not k_pos in check_path:
-                    return False
-
-        return True
-
-    def flip(self):
         for piece in self.pieces:
-            #piece.update(7 - piece.x, 7 - piece.y)
-            piece.x = 7 - piece.x
-            piece.y = 7 - piece.y
-            piece.past_x = 7 - piece.past_x
-            piece.past_y = 7 - piece.past_y
-            piece.rect = pygame.Rect(piece.x * piece.SIDE_L, piece.y * piece.SIDE_L, piece.SIDE_L, piece.SIDE_L)
-
+            for pos in piece.PATH:
+                piece.x = pos[0]
+                piece.y = pos[1]
+                if not self.in_check(board, screen, piece, opponent):
+                    return False
+        return True
 
     def castle(self, rook, board):
         dx = 1 if self.color == "W" else -1
@@ -160,4 +130,16 @@ class Player:
         self.k.castle = False
         rook.castle = False
         return True
+
+    def tick(self):
+        self.clock -= 1
+
+    def get_time(self):
+        if self.clock / 60 == 0:
+            seconds = "00"
+        else:
+            seconds = str(self.clock % 60) if (self.clock % 60) >= 10 else "0" + str(self.clock % 60)
+        return str(math.floor(self.clock / 60)) + ":" + seconds
+
+
 
